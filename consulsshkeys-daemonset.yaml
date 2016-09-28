@@ -1,0 +1,42 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: consulsshkeys
+  namespace: default
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: consulsshkeys
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: consulsshkeys
+  template:
+    metadata:
+      name: consulsshkeys
+      labels:
+        app: consulsshkeys
+    spec:
+      serviceAccount: consulsshkeys
+      containers:
+      - name: consulsshkeys
+        image: sroskelley/consulsshkeys
+        volumeMounts:
+          - name: hostauth
+            mountPath: /root
+        env:
+        - name: CONSUL_ENDPOINT
+          value: svc-consul-master.uat.svc
+        - name: CONSUL_PORT
+          value: "8500"
+        - name: CONSUL_KEY
+          value: config/kube-ssh-authorized-keys
+        - name: AUTHORIZED_KEYS
+          value: /root/.ssh/authorized_keys
+      volumes:
+      - name: hostauth
+        hostPath:
+          path: /home/admin
