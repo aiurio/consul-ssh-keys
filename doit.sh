@@ -29,6 +29,6 @@ newval=$(echo -n "$newval"|base64 -d)
 musthave=$(cat "$authorizedkeys"|head -n1)
 if echo "$newval"|grep -q "$musthave"
 then
-  echo "$(date) replacing $authorizedkeys with:\n$newval"
+  echo -e "$(date) replacing $authorizedkeys with:\n$newval"
   echo "$newval" > "$authorizedkeys"
 fi
